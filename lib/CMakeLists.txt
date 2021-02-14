@@ -15,7 +15,7 @@ set(ARTIST_BUILD_TESTS OFF CACHE BOOL "Artist build tests")
 if (ELEMENTS_QUARTZ_2D)
    set(ARTIST_QUARTZ_2D ON CACHE BOOL "Artist graphics backend option")
 elseif (ELEMENTS_SKIA)
-   set(ARTIST_QUARTZ_2D ON CACHE BOOL "Artist graphics backend option")
+   set(ARTIST_SKIA ON CACHE BOOL "Artist graphics backend option")
 endif()
 
 add_subdirectory(artist)
@@ -168,7 +168,11 @@ target_sources(elements
 
 target_include_directories(elements PUBLIC include)
 target_link_libraries(elements PUBLIC cycfi::infra)
-target_compile_features(elements PUBLIC cxx_std_17)
+if(CMAKE_CXX_STANDARD EQUAL 20)
+   target_compile_features(elements PUBLIC cxx_std_20)
+else()
+   target_compile_features(elements PUBLIC cxx_std_17)
+endif()
 
 if(ELEMENTS_ENABLE_LTO)
    set_target_properties(elements PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
@@ -198,10 +202,6 @@ if (APPLE)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -ftemplate-backtrace-limit=0")
 endif()
 
-if (APPLE)
-   set(lib_dir "/usr/local/opt")
-endif()
-
 ###############################################################################
 # Fontconfig
 
@@ -213,12 +213,7 @@ if (MSVC)
    else()
 	  target_link_libraries(elements PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/fontconfig/x86/fontconfig.lib)
    endif()
-elseif (APPLE)
-   pkg_check_modules(fontconfig REQUIRED IMPORTED_TARGET fontconfig)
-   target_include_directories(elements PUBLIC ${fontconfig_INCLUDE_DIRS})
-   target_link_libraries(elements PUBLIC "${lib_dir}/fontconfig/lib/libfontconfig.a")  # Static link
-   target_link_libraries(elements PUBLIC "${lib_dir}/expat/lib/libexpat.a")            # Static link
-else()
+elseif (APPLE OR UNIX OR WIN32)
    pkg_check_modules(fontconfig REQUIRED IMPORTED_TARGET fontconfig)
    target_link_libraries(elements PUBLIC PkgConfig::fontconfig)
 endif()
@@ -234,12 +229,7 @@ if (MSVC)
    else()
 	  target_link_libraries(elements PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/freetype/win32/freetype.lib)
    endif()
-elseif (APPLE)
-   pkg_check_modules(freetype2 REQUIRED IMPORTED_TARGET freetype2)
-   target_include_directories(elements PUBLIC ${freetype2_INCLUDE_DIRS})
-   target_link_libraries(elements PUBLIC "${lib_dir}/freetype2/lib/libfreetype.a")     # Static link
-   target_link_libraries(elements PUBLIC "${lib_dir}/bzip2/lib/libbz2.a")              # Static link
-elseif (UNIX OR WIN32)
+elseif (APPLE OR UNIX OR WIN32)
    pkg_check_modules(freetype2 REQUIRED IMPORTED_TARGET freetype2)
    target_link_libraries(elements PUBLIC PkgConfig::freetype2)
 endif()
@@ -292,6 +282,10 @@ elseif(ELEMENTS_HOST_UI_LIBRARY STREQUAL "win32")
     if(ELEMENTS_HOST_ONLY_WIN7)
         target_compile_definitions(elements PRIVATE ELEMENTS_HOST_ONLY_WIN7)
         message(STATUS "Windows 7 compatibility enabled")
+    elseif(MINGW)
+        # Required by MinGW to enable SetProcessDpiAwareness (Windows 8.1+)
+        # and GetDpiForWindow (Windows 10+) API
+        target_compile_definitions(elements PRIVATE _WIN32_WINNT=0x0A00)
     endif()
 else()
     message(FATAL_ERROR "Invalid ELEMENTS_HOST_UI_LIBRARY=${ELEMENTS_HOST_UI_LIBRARY}. Set gtk, cocoa or win32.")
