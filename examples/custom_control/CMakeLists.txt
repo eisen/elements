@@ -1,8 +1,3 @@
-###############################################################################
-#  Copyright (c) 2016-2020 Joel de Guzman
-#
-#  Distributed under the MIT License (https://opensource.org/licenses/MIT)
-###############################################################################
 cmake_minimum_required(VERSION 3.9.6...3.15.0)
 project(CustomControl LANGUAGES C CXX)
 
@@ -27,9 +22,12 @@ set(ELEMENTS_APP_COPYRIGHT "Copyright (c) 2016-2020 Aravindhan K")
 set(ELEMENTS_APP_ID "com.cycfi.custom-control")
 set(ELEMENTS_APP_VERSION "1.0")
 
+set(ELEMENTS_APP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 set(ELEMENTS_APP_RESOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/resources/wall.jpg
    ${CMAKE_CURRENT_SOURCE_DIR}/resources/knob_sprites_150x150_darker.png
 )
 
+# For your custom application icon on macOS or Windows see cmake/AppIcon.cmake module
+include(AppIcon)
 include(ElementsConfigApp)
