@@ -806,9 +806,9 @@ namespace cycfi { namespace elements
 
       basic_text_box::caret_metrics info;
       if (_select_end >= get_text().size())
-          info = caret_info(ctx, U"");
+         info = caret_info(ctx, U"");
       else
-          info = caret_info(ctx, &get_text()[_select_end]);
+         info = caret_info(ctx, &get_text()[_select_end]);
 
       if (info.str)
       {
