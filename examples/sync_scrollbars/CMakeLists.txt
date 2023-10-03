@@ -1,5 +1,10 @@
+###############################################################################
+#  Copyright (c) 2016-2020 Joel de Guzman
+#
+#  Distributed under the MIT License (https://opensource.org/licenses/MIT)
+###############################################################################
 cmake_minimum_required(VERSION 3.9.6...3.15.0)
-project(ActiveDynamicList LANGUAGES C CXX)
+project(SyncScrollbars LANGUAGES C CXX)
 
 if (NOT ELEMENTS_ROOT)
    message(FATAL_ERROR "ELEMENTS_ROOT is not set")
@@ -16,14 +21,12 @@ if (NOT ELEMENTS_BUILD_EXAMPLES)
    add_subdirectory(${ELEMENTS_ROOT} elements)
 endif()
 
-set(ELEMENTS_APP_PROJECT "ActiveDynamicList")
-set(ELEMENTS_APP_TITLE "Active Dynamic List")
+set(ELEMENTS_APP_PROJECT "SyncScrollbars")
+set(ELEMENTS_APP_TITLE "Sync Scrollbars")
 set(ELEMENTS_APP_COPYRIGHT "Copyright (c) 2022 Johann Philippe")
-set(ELEMENTS_APP_ID "com.cycfi.active-dynamic-list")
+set(ELEMENTS_APP_ID "com.cycfi.sync-scrollbars")
 set(ELEMENTS_APP_VERSION "1.0")
 
 set(ELEMENTS_APP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-# For your custom application icon on macOS or Windows see cmake/AppIcon.cmake module
-include(AppIcon)
 include(ElementsConfigApp)

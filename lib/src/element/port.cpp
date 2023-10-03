@@ -321,9 +321,19 @@ namespace cycfi { namespace elements
          }
       }
 
-      if (redraw)
+      if (redraw) {
+         on_scroll(point(halign(), valign()));
          ctx.view.refresh(ctx);
+      }
       return redraw;
+   }
+
+   void scroller_base::set_position( point p)
+   {
+       if(allow_hscroll())
+           halign(p.x);
+       if(allow_vscroll())
+           valign(p.y);
    }
 
    bool scroller_base::click(context const& ctx, mouse_button btn)
@@ -361,6 +371,7 @@ namespace cycfi { namespace elements
       {
          clamp(align, 0.0, 1.0);
          valign(align);
+         on_scroll(point(halign(), align));
          ctx.view.refresh(ctx);
       };
 
@@ -368,6 +379,7 @@ namespace cycfi { namespace elements
       {
          clamp(align, 0.0, 1.0);
          halign(align);
+         on_scroll(point(align, valign()));
          ctx.view.refresh(ctx);
       };
 
