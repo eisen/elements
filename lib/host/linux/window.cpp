@@ -39,6 +39,17 @@ namespace cycfi { namespace elements
       return gdk_window_get_scale_factor(gdk_win);
    }
 
+   static gboolean
+   gtk_callback_delete_event(GtkWidget */* widget */,
+                             GdkEvent  */* event  */,
+                             window *win)
+   {
+      if (win && win->on_close)
+         win->on_close();
+
+      return FALSE; // TODO: Should not propagate the event?
+   }
+
    window::window(std::string const& name, int style_, rect const& bounds)
     : _window(new host_window)
    {
@@ -63,6 +74,9 @@ namespace cycfi { namespace elements
 
             position(bounds.top_left());
             size(bounds.bottom_right());
+
+            g_signal_connect(win, "delete_event",
+                             G_CALLBACK(gtk_callback_delete_event), this);
          };
 
       if (app_is_activated())
@@ -157,5 +171,14 @@ namespace cycfi { namespace elements
       else
          on_activate.push_back(set_position);
    }
-}}
 
+   void window::hide()
+   {
+      gtk_widget_hide(_window->host);
+   }
+
+   void window::show()
+   {
+      gtk_widget_show(_window->host); // TODO: Or show_all()?
+   }
+}}
