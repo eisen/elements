@@ -114,6 +114,7 @@ namespace cycfi { namespace elements
                [window_ toggleFullScreen : window_];
          }
       }
+      [window_ setReleasedWhenClosed: NO];
    }
 
    window::~window()
@@ -174,6 +175,19 @@ namespace cycfi { namespace elements
       frame.origin.y = sframe.origin.y + (sframe.size.height - frame.size.height) - p.y;
 
       [window_ setFrame : frame display : YES animate : false];
+   }
+
+   void window::hide()
+   {
+      id window_ = (__bridge id) _window;
+      [window_ orderOut:window_];
+   }
+
+   void window::show()
+   {
+      id window_ = (__bridge id) _window;
+      [window_ makeKeyAndOrderFront:window_];
+      [NSApp activateIgnoringOtherApps:YES];
    }
 }}
 

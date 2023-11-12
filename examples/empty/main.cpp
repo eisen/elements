@@ -17,18 +17,22 @@ int main(int argc, char* argv[])
    app _app(argc, argv, "Empty Starter", "com.cycfi.empty-starter");
    window _win(_app.name());
    _win.on_close = [&_app]() { _app.stop(); };
-
    view view_(_win);
 
-   view_.content(
-                     // Add more content layers here. The order
-                     // specifies the layering. The lowest layer
-                     // is at the bottom of this list.
+   auto open_button = button("open");
 
-      background     // Replace background with your main element,
-                     // or keep it and add another layer on top of it.
-   );
+   window win2(_app.name());
+   view view2(win2);
+   view2.content(box(bkd_color));
+   win2.hide();
 
+   open_button.on_click = [&](bool)
+   {
+      win2.show();
+   };
+   view_.content(open_button, background);
    _app.run();
    return 0;
 }
+
+
